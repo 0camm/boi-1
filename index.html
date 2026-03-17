@@ -1,53 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Binding of Isaac</title>
+  <title>The Binding of Isaac: Wrath of the Lamb</title>
   <style>
-    html, body {
+    *, *::before, *::after {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
       background: #000;
     }
 
-    #game {
-      position: fixed;
-      inset: 0;
+    iframe {
+      display: block;
       width: 100vw;
       height: 100vh;
-    }
-
-    ruffle-player {
-      display: block;
-      width: 100% !important;
-      height: 100% !important;
+      border: none;
     }
   </style>
-  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 </head>
 <body>
-  <div id="game"></div>
-
-  <script>
-    window.addEventListener("load", () => {
-      if (!window.RufflePlayer) {
-        document.body.innerHTML = "<p style='color:white;padding:20px'>Ruffle failed to load.</p>";
-        return;
-      }
-
-      const ruffle = window.RufflePlayer.newest();
-      const player = ruffle.createPlayer();
-
-      player.style.width = "100vw";
-      player.style.height = "100vh";
-      player.style.display = "block";
-      player.setAttribute("src", "./game.swf");
-
-      document.getElementById("game").appendChild(player);
-    });
-  </script>
+  <iframe
+    src="https://archive.org/embed/the-binding-of-isaac_202111&autoplay=1"
+    allowfullscreen
+    allow="fullscreen; autoplay"
+    loading="eager"
+    title="The Binding of Isaac: Wrath of the Lamb"
+  ></iframe>
 </body>
 </html>
