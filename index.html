@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Game</title>
+  <title>The Binding of Isaac</title>
   <style>
     html, body {
       margin: 0;
@@ -13,32 +13,40 @@
       background: #000;
     }
 
-    ruffle-player {
-      display: block;
-      width: 100vw !important;
-      height: 100vh !important;
+    #game {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
     }
 
-    #canvas {
-      width: 100vw !important;
-      height: 100vh !important;
+    ruffle-player {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
     }
   </style>
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 </head>
 <body>
-  <ruffle-player id="canvas" style="width:100vw;height:100vh;" width="560" height="384"></ruffle-player>
+  <div id="game"></div>
 
   <script>
     window.addEventListener("load", () => {
-      const player = document.getElementById("canvas");
+      if (!window.RufflePlayer) {
+        document.body.innerHTML = "<p style='color:white;padding:20px'>Ruffle failed to load.</p>";
+        return;
+      }
 
-      // Put your real SWF path here:
-      player.setAttribute("src", "./game.swf");
+      const ruffle = window.RufflePlayer.newest();
+      const player = ruffle.createPlayer();
 
-      // Try to keep it fullscreen
       player.style.width = "100vw";
       player.style.height = "100vh";
+      player.style.display = "block";
+      player.setAttribute("src", "./game.swf");
+
+      document.getElementById("game").appendChild(player);
     });
   </script>
 </body>
