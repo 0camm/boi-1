@@ -18,21 +18,57 @@
       background: #000;
     }
 
-    iframe {
-      display: block;
+    #game-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #game-frame {
+      /* Native Flash game resolution for Binding of Isaac */
+      width: 900px;
+      height: 600px;
       border: none;
+      transform-origin: center center;
+      display: block;
+      flex-shrink: 0;
     }
   </style>
 </head>
 <body>
-  <iframe
-    src="https://archive.org/embed/the-binding-of-isaac_202111&autoplay=1"
-    allowfullscreen
-    allow="fullscreen; autoplay"
-    loading="eager"
-    title="The Binding of Isaac: Wrath of the Lamb"
-  ></iframe>
+  <div id="game-wrapper">
+    <iframe
+      id="game-frame"
+      src="https://archive.org/embed/the-binding-of-isaac_202111&autoplay=1"
+      allowfullscreen
+      allow="fullscreen; autoplay"
+      loading="eager"
+      title="The Binding of Isaac: Wrath of the Lamb"
+    ></iframe>
+  </div>
+
+  <script>
+    const frame = document.getElementById('game-frame');
+    const GAME_W = 900;
+    const GAME_H = 600;
+
+    function scaleToFill() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      // Scale to completely fill the screen (cover mode)
+      const scale = Math.max(vw / GAME_W, vh / GAME_H);
+      frame.style.transform = `scale(${scale})`;
+    }
+
+    scaleToFill();
+    window.addEventListener('resize', scaleToFill);
+  </script>
 </body>
 </html>
