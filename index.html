@@ -18,40 +18,27 @@
       background: #000;
     }
 
-    #game-wrapper {
+    #game-frame {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    #game-frame {
-      /* Native Flash game resolution for Binding of Isaac */
       width: 900px;
       height: 600px;
       border: none;
-      transform-origin: center center;
-      display: block;
-      flex-shrink: 0;
+      transform-origin: top left;
     }
   </style>
 </head>
 <body>
-  <div id="game-wrapper">
-    <iframe
-      id="game-frame"
-      src="https://archive.org/embed/the-binding-of-isaac_202111&autoplay=1"
-      allowfullscreen
-      allow="fullscreen; autoplay"
-      loading="eager"
-      title="The Binding of Isaac: Wrath of the Lamb"
-    ></iframe>
-  </div>
+
+  <iframe
+    id="game-frame"
+    src="https://archive.org/embed/the-binding-of-isaac_202111&autoplay=1"
+    allowfullscreen
+    allow="fullscreen; autoplay"
+    loading="eager"
+    title="The Binding of Isaac: Wrath of the Lamb"
+  ></iframe>
 
   <script>
     const frame = document.getElementById('game-frame');
@@ -62,13 +49,19 @@
       const vw = window.innerWidth;
       const vh = window.innerHeight;
 
-      // Scale to completely fill the screen (cover mode)
+      // Cover: scale up so no black bars on either axis
       const scale = Math.max(vw / GAME_W, vh / GAME_H);
-      frame.style.transform = `scale(${scale})`;
+
+      // Offset so the scaled iframe is perfectly centered
+      const x = (vw - GAME_W * scale) / 2;
+      const y = (vh - GAME_H * scale) / 2;
+
+      frame.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
     }
 
     scaleToFill();
     window.addEventListener('resize', scaleToFill);
   </script>
+
 </body>
 </html>
