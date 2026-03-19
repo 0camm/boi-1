@@ -1,67 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Binding of Isaac: Wrath of the Lamb</title>
-  <style>
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>classroom</title>
 
+  <style>
     html, body {
+      margin: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
       background: #000;
+      overscroll-behavior: none;
+      touch-action: none;
     }
 
-    #game-frame {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 900px;
-      height: 600px;
-      border: none;
-      transform-origin: top left;
+    body {
+      display: grid;
+      place-items: center;
+    }
+
+    #flash-container {
+      position: relative;
+      background: #000;
+      overflow: hidden;
+      contain: layout paint size;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    ruffle-player {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #000;
     }
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle@0.2.0-nightly.2025.10.2/ruffle.min.js"></script>
 </head>
 <body>
-
-  <iframe
-    id="game-frame"
-    src="https://archive.org/embed/the-binding-of-isaac_202111&autoplay=1"
-    allowfullscreen
-    allow="fullscreen; autoplay"
-    loading="eager"
-    title="The Binding of Isaac: Wrath of the Lamb"
-  ></iframe>
+  <div id="flash-container"></div>
 
   <script>
-    const frame = document.getElementById('game-frame');
-    const GAME_W = 900;
-    const GAME_H = 600;
+    (function () {
+      const container = document.getElementById("flash-container");
+      const swfUrl = "https://cdn.jsdelivr.net/gh/RobiFet/CMinterview@a4017231eca9f2173ad7ec0e63b01e4786b4ad6b/web/src/BiWrath.swf";
+      const aspectRatio = 5.5 / 3;
 
-    function scaleToFill() {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      let player = null;
+      let resizeQueued = false;
 
-      // Cover: scale up so no black bars on either axis
-      const scale = Math.max(vw / GAME_W, vh / GAME_H);
+      function resizeGame() {
+        resizeQueued = false;
 
-      // Offset so the scaled iframe is perfectly centered
-      const x = (vw - GAME_W * scale) / 2;
-      const y = (vh - GAME_H * scale) / 2;
+        const ww = window.innerWidth || document.documentElement.clientWidth || 0;
+        const wh = window.innerHeight || document.documentElement.clientHeight || 0;
 
-      frame.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-    }
+        let width = ww;
+        let height = Math.round(width / aspectRatio);
 
-    scaleToFill();
-    window.addEventListener('resize', scaleToFill);
+        if (height > wh) {
+          height = wh;
+          width = Math.round(height * aspectRatio);
+        }
+
+        container.style.width = width + "px";
+        container.style.height = height + "px";
+      }
+
+      function scheduleResize() {
+        if (resizeQueued) return;
+        resizeQueued = true;
+        requestAnimationFrame(resizeGame);
+      }
+
+      function initRuffle() {
+        const ruffle = window.RufflePlayer && (window.RufflePlayer.newest?.() || window.RufflePlayer.createPlayer?.());
+
+        if (!ruffle) {
+          container.textContent = "Ruffle failed to load.";
+          return;
+        }
+
+        player = ruffle.createPlayer();
+        player.style.width = "100%";
+        player.style.height = "100%";
+        player.style.display = "block";
+        player.style.background = "#000";
+
+        container.innerHTML = "";
+        container.appendChild(player);
+        player.load(swfUrl);
+      }
+
+      window.addEventListener("resize", scheduleResize, { passive: true });
+      window.addEventListener("orientationchange", scheduleResize, { passive: true });
+
+      resizeGame();
+      initRuffle();
+    })();
   </script>
-
 </body>
 </html>
